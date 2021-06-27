@@ -19,6 +19,10 @@ const { response } = require('express');
  */
  const composerAPI = require('./routes/Abdelmalak-composer-routers');
 
+ /**
+ * person examples
+ */
+  const personAPI = require('./routes/Abdelmalak-person-routers');
 // application
 var app = express();
 // Sets up the view engine, view's directory path, and the server port.
@@ -60,6 +64,7 @@ const openapiSpecification = swaggerJsdoc(options);
 // Wire the openapiSpecification variable to the app variable 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use('/api', composerAPI);
+app.use('/api', personAPI);
 
 /**
  * Example apis
