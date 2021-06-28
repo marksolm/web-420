@@ -9,14 +9,14 @@
 
 const express = require('express');
 const router = express.Router();
-const person = require('../models/Abdelmalak-person');
+const Person = require('../models/Abdelmalak-person');
 /**
  * findAllPerson
  * @openapi
- * /api/persons:
+ * /api/people:
  *   get:
  *     tags:
- *       - persons
+ *       - people
  *     description: API for returning a list of person documents from MongoODB
  *     summary: return list of person document
  *     responses:
@@ -27,7 +27,7 @@ const person = require('../models/Abdelmalak-person');
  *       '501':
  *         description: MongoDB Exception
  */
-router.get('/persons', async(req, res) => {
+router.get('/people', async(req, res) => {
     try {
         Person.find({}, function(err, persons) {
             if (err) {
@@ -52,10 +52,10 @@ router.get('/persons', async(req, res) => {
 /**
  * createPerson
  * @openapi
- * /api/persons:
+ * /api/people:
  *   post:
  *     tags:
- *       - persons
+ *       - people
  *     name: createPerson
  *     summary: Creates a new person document
  *     requestBody:
@@ -101,14 +101,14 @@ router.get('/persons', async(req, res) => {
  *       '501':
  *         description: MongoDB Exception
  */
-router.post('/persons', async(req, res) => {
+router.post('/people', async(req, res) => {
     try {
         const newPerson = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             roles: req.body.roles,
             dependents: req.body.dependents,
-            birthDate: req.body.birthDate
+            birthDate: req.body.birthDate,
         };
 
         await Person.create(newPerson, function(err, person) {

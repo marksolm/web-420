@@ -23,12 +23,8 @@ let dependentSchema = new Schema({
 let personSchema = new Schema({
   firstName: { type: String },
   lastName: { type: String },
-  roles: [
-     roleSchema
-  ],
-  dependents: [
-    dependentSchema
-  ],
+  roles: [roleSchema],
+  dependents: [dependentSchema],
   birthDate: { type: String }
 })
 
