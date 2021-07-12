@@ -30,6 +30,11 @@ const { response } = require('express');
  */
   const userAPI = require('./routes/Abdelmalak-session-routes');
 
+  /**
+ * customer examples
+ */
+   const customerAPI = require('./routes/Abdelmalak-node-shopper-routes');
+
 var app = express();
 // Sets up the view engine, view's directory path, and the server port.
 app.set("port", process.env.PORT || 3000);
@@ -72,6 +77,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use('/api', composerAPI);
 app.use('/api', personAPI);
 app.use('/api', userAPI);
+app.use('/api', customerAPI);
 
 
 /**
