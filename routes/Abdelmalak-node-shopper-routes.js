@@ -17,10 +17,9 @@ const Customer = require('../models/Abdelmalak-customer');
  * /api/customers:
  *   post:
  *     tags:
- *       - Customer
+ *       - Customers
  *     name: createCustomer
- *     description: API for adding a new customer document to MongoDB Atlas
- *     summary: Creates a new customer document
+ *     summary: Creates a new customer
  *     requestBody:
  *       description: Customer information
  *       content:
@@ -31,16 +30,15 @@ const Customer = require('../models/Abdelmalak-customer');
  *               - lastName
  *               - userName
  *             properties:
- *              firstName:
+ *               firstName:
  *                 type: string
- *              lastName:
+ *               lastName:
  *                 type: string
- *              userName:
+ *               userName:
  *                 type: string
- * 
  *     responses:
  *       '200':
- *         description: Customer added to MongoDB
+ *         description: Customer added
  *       '500':
  *         description: Server Exception
  *       '501':
@@ -49,10 +47,10 @@ const Customer = require('../models/Abdelmalak-customer');
  router.post('/customers', async(req, res) => {
     try {
         const newCustomer = {
-            firstName: req.body.firstName,
+            firsName: req.body.firstName,
             lastName: req.body.lastName,
             userName: req.body.userName
-        }
+        };
 
         await Customer.create(newCustomer, function(err, customer) {
             if (err) {
@@ -74,28 +72,26 @@ const Customer = require('../models/Abdelmalak-customer');
 })
 
 /**
- * createInvoiceByUserName
+ * createInvoice
  * @openapi
- * /api/customers/{userName}/invoices:
+ * /api/customers/{username}/invoices:
  *   post:
  *     tags:
- *       - Customer
- *     name: createInvoiceByUserName
- *     description: Adding new invoice document to mongoDB based on username.
- *     summary: create Invoice By UserName document
+ *       - Customers
+ *     name: createInvoice
+ *     summary: Adds an invoice to a customer
  *     parameters:
- *       - name: userName
+ *       - name: username
  *         in: path
  *         required: true
- *         description: Customer Invoice's Information 
+ *         description: Customer username
  *         schema:
  *           type: string
  *     requestBody:
  *       description: Invoice information
  *       content:
  *         application/json:
- *          schema:
- *             type: object
+ *           schema:
  *             required:
  *               - subtotal
  *               - tax
@@ -104,13 +100,13 @@ const Customer = require('../models/Abdelmalak-customer');
  *               - lineItems
  *             properties:
  *               subtotal:
- *                 type: string
+ *                 type: number
  *               tax:
- *                 type: string
+ *                 type: number
  *               dateCreated:
- *                  type: string
+ *                 type: string
  *               dateShipped:
- *                  type: string
+ *                 type: string
  *               lineItems:
  *                 type: array
  *                 items:
@@ -124,22 +120,24 @@ const Customer = require('../models/Abdelmalak-customer');
  *                       type: number
  *     responses:
  *       '200':
- *         description: Customer added
+ *         description: Invoice added
  *       '500':
  *         description: Server Exception
  *       '501':
  *         description: MongoDB Exception
  */
-
-router.post('/customers/:userName/invoices', async(req, res) => {
+router.post('/customers/:username/invoices', async(req, res) => {
     try {
-        Customer.findOne({'userName': req.params.userName}, function(err, customer) {
+        console.log(req.params.username);
+        Customer.findOne({'userName': req.params.username}, function(err, customer) {
             if (err) {
                 console.log(err);
                 res.status(501).send({
                     'message': `MongoDB Exception: ${err}`
                 })
             } else {
+                console.log(customer);
+
                 const newInvoice = {
                     subtotal: req.body.subtotal,
                     tax: req.body.tax,
@@ -147,16 +145,18 @@ router.post('/customers/:userName/invoices', async(req, res) => {
                     dateShipped: req.body.dateShipped,
                     lineItems: req.body.lineItems
                 };
+
                 customer.invoices.push(newInvoice);
-                customer.save(function(err, updatedInvoice) {
+
+                customer.save(function(err, savedCustomer) {
                     if (err) {
                         console.log(err);
                         res.status(501).send({
                             'message': `MongoDB Exception: ${err}`
                         })
                     } else {
-                        console.log(updatedInvoice);
-                        res.json(updatedInvoice);
+                        console.log(savedCustomer);
+                        res.json(savedCustomer);
                     }
                 })
             }
@@ -164,55 +164,53 @@ router.post('/customers/:userName/invoices', async(req, res) => {
     } catch (e) {
         console.log(e);
         res.status(500).send({
-            'message': `Server Exception: ${e}`
+            'message': `Server Exception: ${e.message}`
         })
     }
 })
 
 /**
- * findAllInvoicesByUserName
+ * findInvoicesByCustomerId
  * @openapi
- * /api/customers/{userName}/invoices:
+ * /api/customers/{username}/invoices:
  *   get:
  *     tags:
- *       - Customer 
- *     description: API for returning the customer invoices requested by username.
- *     summary: Display all invoices 
+ *       - Customers
+ *     description:  API for returning a list of invoices by username
+ *     summary: returns a list of invoices
  *     parameters:
  *       - name: username
- *         in: path                                   
+ *         in: path
  *         required: true
- *         description: Customer Username
  *         schema:
  *           type: string
  *     responses:
  *       '200':
- *         description: array of invoices.
+ *         description: Array of invoices
  *       '500':
- *         description: Server Exception.
+ *         description: Server Exception
  *       '501':
- *         description: MongoDB Exception.
+ *         description: MongoDB Exception
  */
-
-router.get('/customers/:userName/invoices', async(req,res) => {
-    try{
-        Customer.findOne({'userName': req.params.userName}, function(err,customer) {
-            if(err) {
+router.get('/customers/:username/invoices', async(req, res) => {
+    try {
+        Customer.findOne({'userName': req.params.username}, function(err, customer) {
+            if (err) {
                 console.log(err);
                 res.status(501).send({
-                    'message' : `Server Exception ${err}`
+                    'message': `MongoDB Exception: ${err}`
                 })
             } else {
-                console.log(customer);
-                res.status(200).send (customer.invoices)
+                console.log(customer.invoices);
+                res.json(customer.invoices);
             }
         })
     } catch (e) {
         console.log(e);
-        res.status(501).send({
-            'message' : `MongoDB Exception ${e.message}`
+        res.status(500).send({
+            'message': `Server Exception: ${e.message}`
         })
     }
 })
-//Exporting 
+
 module.exports = router;

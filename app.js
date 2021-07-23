@@ -35,6 +35,11 @@ const { response } = require('express');
  */
    const customerAPI = require('./routes/Abdelmalak-node-shopper-routes');
 
+/**
+ * team examples
+ */
+ const teamAPI = require('./routes/Abdelmalak-team-routers');
+
 var app = express();
 // Sets up the view engine, view's directory path, and the server port.
 app.set("port", process.env.PORT || 3000);
@@ -78,6 +83,7 @@ app.use('/api', composerAPI);
 app.use('/api', personAPI);
 app.use('/api', userAPI);
 app.use('/api', customerAPI);
+app.use('/api', teamAPI);
 
 
 /**
